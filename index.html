@@ -1,0 +1,241 @@
+<title>Actuator 0x98 Endurance</title>
+<meta http-equiv="refresh" content="300">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#eef1f4; --surface:#ffffff; --sunk:#f5f7f9; --line:#dbe0e6; --hair:#e8ecf0;
+  --txt:#101821; --dim:#5a6674; --muted:#8a949f;
+  --ext:#2a78d6; --ret:#eb6834;
+  --good:#0a8a0a; --warn:#a97400; --crit:#c23434;
+  --goodbg:#e6f4e6; --warnbg:#fdf3dd; --critbg:#fbe9e9;
+  --display:"Archivo",system-ui,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0e1319; --surface:#161d25; --sunk:#111821; --line:#27313c; --hair:#1e262f;
+  --txt:#e7edf3; --dim:#94a0ad; --muted:#6d7985;
+  --ext:#3987e5; --ret:#d95926;
+  --good:#3fbf3f; --warn:#e0a52a; --crit:#e26a6a;
+  --goodbg:#14261a; --warnbg:#2a2214; --critbg:#2b1818;
+}}
+:root[data-theme="dark"]{
+  --bg:#0e1319; --surface:#161d25; --sunk:#111821; --line:#27313c; --hair:#1e262f;
+  --txt:#e7edf3; --dim:#94a0ad; --muted:#6d7985;
+  --ext:#3987e5; --ret:#d95926;
+  --good:#3fbf3f; --warn:#e0a52a; --crit:#e26a6a;
+  --goodbg:#14261a; --warnbg:#2a2214; --critbg:#2b1818;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--body);font-size:15px;line-height:1.55;
+ padding-inline:clamp(16px,3.5vw,44px);padding-block:28px 64px}
+.wrap{max-width:1060px;margin:0 auto;display:flex;flex-direction:column;gap:30px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.1}
+h1{font-size:clamp(28px,4.4vw,40px);font-weight:700;letter-spacing:-.015em}
+h2{font-size:21px;font-weight:600;letter-spacing:-.005em}
+h3{font-size:15px;font-weight:600}
+p{margin:0}
+.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+/* header */
+header{display:flex;flex-direction:column;gap:10px}
+.meta{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--mono);font-size:12.5px;color:var(--dim)}
+.meta b{color:var(--txt);font-weight:500}
+.live{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:12px;color:var(--good)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--good);flex:none}
+@media (prefers-reduced-motion:no-preference){.dot{animation:p 2.4s ease-in-out infinite}}
+@keyframes p{0%,100%{opacity:1}50%{opacity:.35}}
+/* verdict */
+.verdict{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:20px 22px;
+ display:flex;flex-direction:column;gap:14px}
+.vhead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:2px;background:var(--line);
+ border:1px solid var(--line);border-radius:5px;overflow:hidden}
+.tile{background:var(--surface);padding:12px 14px;display:flex;flex-direction:column;gap:3px}
+.tile .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.tile .v{font-family:var(--display);font-size:25px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.tile .s{font-family:var(--mono);font-size:11.5px;color:var(--dim)}
+/* findings */
+.finds{display:flex;flex-direction:column;gap:10px}
+.find{display:grid;grid-template-columns:auto 1fr;gap:14px;background:var(--surface);border:1px solid var(--line);
+ border-radius:6px;padding:14px 16px}
+.find.w{border-left:3px solid var(--warn)} .find.c{border-left:3px solid var(--crit)} .find.g{border-left:3px solid var(--good)}
+.badge{font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;padding:3px 8px;border-radius:3px;
+ height:fit-content;white-space:nowrap;font-weight:500}
+.badge.w{background:var(--warnbg);color:var(--warn)} .badge.c{background:var(--critbg);color:var(--crit)}
+.badge.g{background:var(--goodbg);color:var(--good)}
+.find .body{display:flex;flex-direction:column;gap:5px}
+.find p{font-size:14px;color:var(--dim)}
+.find p strong{color:var(--txt);font-weight:600}
+/* charts */
+.chart{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px 18px 10px;
+ display:flex;flex-direction:column;gap:4px}
+.chead{display:flex;justify-content:space-between;align-items:baseline;gap:14px;flex-wrap:wrap}
+.legend{display:flex;gap:14px;font-family:var(--mono);font-size:11.5px;color:var(--dim)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:11px;height:3px;border-radius:2px;flex:none}
+.note{font-size:13.5px;color:var(--dim)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:720px){.grid2{grid-template-columns:1fr}}
+svg{display:block;width:100%;height:auto;overflow:visible}
+.gl{stroke:var(--hair);stroke-width:1}
+.ax{stroke:var(--line);stroke-width:1}
+.tk{fill:var(--muted);font-family:var(--mono);font-size:10.5px}
+.dl{font-family:var(--mono);font-size:11px;font-weight:500}
+/* tables */
+.tw{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:6px}
+table{border-collapse:collapse;width:100%;font-size:13.5px;font-variant-numeric:tabular-nums}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);
+ text-align:right;font-weight:500;padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+td{padding:9px 12px;border-bottom:1px solid var(--hair);text-align:right;font-family:var(--mono);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+.pill{font-family:var(--mono);font-size:10.5px;padding:2px 7px;border-radius:3px}
+.pill.p{background:var(--goodbg);color:var(--good)} .pill.f{background:var(--critbg);color:var(--crit)}
+.bad{color:var(--crit)}
+footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padding-top:14px;
+ display:flex;flex-direction:column;gap:5px}
+.tip{position:fixed;pointer-events:none;background:var(--surface);border:1px solid var(--line);border-radius:5px;
+ padding:7px 10px;font-family:var(--mono);font-size:11.5px;box-shadow:0 4px 14px rgba(0,0,0,.14);opacity:0;
+ transition:opacity .1s;z-index:9;color:var(--txt);white-space:nowrap}
+</style>
+
+<div class="wrap">
+<header>
+  <span class="eyebrow">Toro Rev3 · linear actuator · CAN node 0x98</span>
+  <h1>Actuator 0x98 Endurance</h1>
+  <div class="meta">
+    <span>snapshot <b id="snap"></b></span>
+    <span>source <b>logs/cycle_0x98.csv</b></span>
+    <span class="live"><span class="dot"></span>still cycling at snapshot</span>
+  </div>
+</header>
+
+<section class="verdict">
+  <div class="tiles" id="tiles"></div>
+</section>
+
+
+
+<section style="display:flex;flex-direction:column;gap:14px">
+  <h2>Trends across the current run <span id="runh"></span></h2>
+  <div class="grid2">
+    <div class="chart">
+      <div class="chead"><h3>Extend energy per leg &middot; J</h3></div>
+      <div id="c_energy"></div>
+    </div>
+    <div class="chart">
+      <div class="chead"><h3>Retract energy per leg &middot; J</h3></div>
+      <div id="c_energy2"></div>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="chart">
+      <div class="chead"><h3>Peak phase current &middot; A</h3>
+        <div class="legend"><span><i class="sw" style="background:var(--ext)"></i>extend</span>
+        <span><i class="sw" style="background:var(--ret)"></i>retract</span></div></div>
+      <div id="c_cur"></div>
+    </div>
+    <div class="chart">
+      <div class="chead"><h3>Temperature &middot; &deg;C</h3>
+        <div class="legend"><span><i class="sw" style="background:var(--ext)"></i>motor est</span>
+        <span><i class="sw" style="background:var(--ret)"></i>FET</span></div></div>
+      <div id="c_temp"></div>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="chart">
+      <div class="chead"><h3>Leg duration &middot; ms</h3>
+        <div class="legend"><span><i class="sw" style="background:var(--ext)"></i>extend</span>
+        <span><i class="sw" style="background:var(--ret)"></i>retract</span></div></div>
+      <div id="c_time"></div>
+    </div>
+    <div class="chart">
+      <div class="chead"><h3>Anomaly rate &middot; % of legs</h3>
+        <div class="legend"><span><i class="sw" style="background:var(--ext)"></i>retract &gt;25 A</span>
+        <span><i class="sw" style="background:var(--ret)"></i>legs &lt;50 ms</span></div></div>
+      <div id="c_anom"></div>
+    </div>
+  </div>
+</section>
+
+<section style="display:flex;flex-direction:column;gap:12px">
+  <h2>Sessions</h2>
+  <div class="tw"><table id="t_sess"><thead><tr><th>Session</th><th>Cycles</th><th>Legs</th><th>Hours</th>
+  <th>Motor max</th><th>FET max</th><th>Phase max</th><th>Bus min</th></tr></thead><tbody></tbody></table></div>
+</section>
+
+</div>
+<div class="tip" id="tip"></div>
+
+<script id="data" type="application/json">{"snapshot":"2026-09-19 12:08 local","totals":{"legs":120152,"cycles":58706,"sessions":5,"mainLegs":110072,"mainCycles":53840,"mainHrs":68.1,"ratePerMin":13.5,"energyMJ":19.0,"regenMJ":5.23},"main":{"motMax":56,"fetMax":43,"phMax":37.1,"vMin":112.5},"sessions":[{"n":1,"legs":1280,"cycles":628,"hrs":1.07,"motmax":90,"fetmax":55,"phmax":48.6,"vmin":109.4},{"n":2,"legs":632,"cycles":316,"hrs":0.57,"motmax":57,"fetmax":56,"phmax":34.9,"vmin":108.7},{"n":3,"legs":652,"cycles":309,"hrs":2.83,"motmax":65,"fetmax":49,"phmax":36.9,"vmin":112.3},{"n":4,"legs":7516,"cycles":3613,"hrs":5.39,"motmax":54,"fetmax":50,"phmax":35.9,"vmin":112.6},{"n":5,"legs":110072,"cycles":53840,"hrs":68.12,"motmax":56,"fetmax":43,"phmax":37.1,"vmin":112.5}],"trend":[{"h":0.0,"extPh":34.5,"retPh":11.7,"extE":374.1,"retE":-99.5,"extT":899,"retT":1551,"fet":41,"mot":48,"vmin":112.6},{"h":1.7,"extPh":34.4,"retPh":11.6,"extE":375.0,"retE":-100.1,"extT":902,"retT":1552,"fet":40,"mot":48,"vmin":112.6},{"h":3.41,"extPh":34.5,"retPh":11.5,"extE":375.9,"retE":-99.9,"extT":903,"retT":1553,"fet":39,"mot":47,"vmin":112.6},{"h":5.11,"extPh":34.4,"retPh":11.5,"extE":375.8,"retE":-99.3,"extT":900,"retT":1553,"fet":39,"mot":47,"vmin":112.6},{"h":6.81,"extPh":34.5,"retPh":11.4,"extE":376.0,"retE":-91.0,"extT":899,"retT":1553,"fet":39,"mot":46,"vmin":112.6},{"h":8.52,"extPh":34.4,"retPh":11.5,"extE":375.1,"retE":-89.3,"extT":898,"retT":1553,"fet":39,"mot":47,"vmin":112.6},{"h":10.22,"extPh":34.4,"retPh":11.4,"extE":373.5,"retE":-94.8,"extT":899,"retT":1553,"fet":38,"mot":47,"vmin":112.6},{"h":11.92,"extPh":34.5,"retPh":11.3,"extE":374.5,"retE":-90.6,"extT":898,"retT":1553,"fet":38,"mot":48,"vmin":112.6},{"h":13.63,"extPh":34.5,"retPh":11.5,"extE":370.6,"retE":-97.9,"extT":898,"retT":1553,"fet":38,"mot":47,"vmin":112.6},{"h":15.33,"extPh":34.5,"retPh":11.7,"extE":364.5,"retE":-98.8,"extT":897,"retT":1553,"fet":39,"mot":47,"vmin":112.6},{"h":17.03,"extPh":34.5,"retPh":11.8,"extE":362.3,"retE":-99.6,"extT":896,"retT":1553,"fet":39,"mot":47,"vmin":112.6},{"h":18.73,"extPh":34.5,"retPh":11.9,"extE":360.9,"retE":-100.5,"extT":897,"retT":1553,"fet":39,"mot":48,"vmin":112.6},{"h":20.44,"extPh":34.5,"retPh":12.0,"extE":359.4,"retE":-101.3,"extT":896,"retT":1553,"fet":40,"mot":49,"vmin":112.6},{"h":22.14,"extPh":34.5,"retPh":12.1,"extE":359.2,"retE":-101.5,"extT":895,"retT":1553,"fet":42,"mot":51,"vmin":112.6},{"h":23.84,"extPh":34.5,"retPh":12.1,"extE":358.2,"retE":-101.1,"extT":889,"retT":1553,"fet":42,"mot":51,"vmin":112.6},{"h":25.55,"extPh":34.5,"retPh":12.2,"extE":358.6,"retE":-101.4,"extT":889,"retT":1553,"fet":41,"mot":50,"vmin":112.6},{"h":27.25,"extPh":34.6,"retPh":12.2,"extE":357.5,"retE":-101.5,"extT":888,"retT":1553,"fet":40,"mot":50,"vmin":112.6},{"h":28.95,"extPh":34.6,"retPh":12.1,"extE":357.0,"retE":-100.1,"extT":888,"retT":1553,"fet":40,"mot":49,"vmin":112.6},{"h":30.66,"extPh":34.6,"retPh":12.1,"extE":356.1,"retE":-100.0,"extT":889,"retT":1553,"fet":39,"mot":48,"vmin":112.6},{"h":32.36,"extPh":34.6,"retPh":11.9,"extE":355.9,"retE":-98.7,"extT":888,"retT":1553,"fet":39,"mot":47,"vmin":112.6},{"h":34.06,"extPh":34.7,"retPh":11.6,"extE":354.0,"retE":-97.6,"extT":888,"retT":1554,"fet":38,"mot":46,"vmin":112.5},{"h":35.77,"extPh":34.7,"retPh":11.6,"extE":354.7,"retE":-97.3,"extT":888,"retT":1554,"fet":38,"mot":46,"vmin":112.6},{"h":37.47,"extPh":34.6,"retPh":11.6,"extE":355.1,"retE":-97.5,"extT":888,"retT":1554,"fet":38,"mot":45,"vmin":112.6},{"h":39.17,"extPh":34.6,"retPh":11.7,"extE":355.5,"retE":-97.9,"extT":888,"retT":1554,"fet":38,"mot":46,"vmin":112.6},{"h":40.88,"extPh":34.7,"retPh":11.7,"extE":355.3,"retE":-97.6,"extT":888,"retT":1554,"fet":39,"mot":47,"vmin":112.6},{"h":42.58,"extPh":34.6,"retPh":11.8,"extE":353.7,"retE":-97.8,"extT":888,"retT":1554,"fet":40,"mot":48,"vmin":112.6},{"h":44.28,"extPh":34.6,"retPh":11.7,"extE":351.5,"retE":-98.2,"extT":888,"retT":1554,"fet":40,"mot":49,"vmin":112.6},{"h":45.98,"extPh":34.6,"retPh":11.9,"extE":350.0,"retE":-98.1,"extT":888,"retT":1554,"fet":41,"mot":49,"vmin":112.6},{"h":47.69,"extPh":34.6,"retPh":11.8,"extE":349.3,"retE":-98.1,"extT":888,"retT":1553,"fet":41,"mot":49,"vmin":112.6},{"h":49.39,"extPh":34.6,"retPh":11.7,"extE":350.0,"retE":-97.4,"extT":888,"retT":1554,"fet":41,"mot":49,"vmin":112.6},{"h":51.09,"extPh":34.6,"retPh":11.7,"extE":349.3,"retE":-96.2,"extT":888,"retT":1554,"fet":40,"mot":48,"vmin":112.5},{"h":52.8,"extPh":34.6,"retPh":11.7,"extE":348.7,"retE":-96.4,"extT":888,"retT":1555,"fet":39,"mot":48,"vmin":112.6},{"h":54.5,"extPh":34.6,"retPh":11.6,"extE":348.0,"retE":-96.5,"extT":888,"retT":1554,"fet":39,"mot":47,"vmin":112.6},{"h":56.2,"extPh":34.6,"retPh":11.7,"extE":348.1,"retE":-96.5,"extT":888,"retT":1555,"fet":39,"mot":47,"vmin":112.6},{"h":57.91,"extPh":34.6,"retPh":11.6,"extE":348.0,"retE":-96.7,"extT":888,"retT":1554,"fet":38,"mot":46,"vmin":112.6},{"h":59.61,"extPh":34.6,"retPh":11.6,"extE":348.2,"retE":-96.7,"extT":888,"retT":1554,"fet":38,"mot":45,"vmin":112.6},{"h":61.31,"extPh":34.6,"retPh":11.6,"extE":348.4,"retE":-96.6,"extT":888,"retT":1554,"fet":37,"mot":45,"vmin":112.6},{"h":63.02,"extPh":34.6,"retPh":11.6,"extE":348.0,"retE":-96.5,"extT":888,"retT":1555,"fet":38,"mot":46,"vmin":112.6},{"h":64.72,"extPh":34.6,"retPh":11.6,"extE":347.5,"retE":-96.7,"extT":887,"retT":1555,"fet":38,"mot":46,"vmin":112.6},{"h":66.42,"extPh":34.6,"retPh":11.7,"extE":347.6,"retE":-96.8,"extT":888,"retT":1555,"fet":39,"mot":47,"vmin":112.6}],"anomalies":[{"h":0,"spikePct":3.77,"zeroPct":1.28},{"h":4,"spikePct":3.78,"zeroPct":1.21},{"h":8,"spikePct":3.78,"zeroPct":1.05},{"h":12,"spikePct":3.8,"zeroPct":1.02},{"h":16,"spikePct":3.73,"zeroPct":0.9},{"h":20,"spikePct":3.71,"zeroPct":0.63},{"h":24,"spikePct":3.66,"zeroPct":0.26},{"h":28,"spikePct":3.76,"zeroPct":0.17},{"h":32,"spikePct":3.75,"zeroPct":0.49},{"h":36,"spikePct":3.75,"zeroPct":0.45},{"h":40,"spikePct":3.75,"zeroPct":0.37},{"h":44,"spikePct":3.74,"zeroPct":0.28},{"h":48,"spikePct":3.74,"zeroPct":0.36},{"h":52,"spikePct":3.72,"zeroPct":0.54},{"h":56,"spikePct":3.74,"zeroPct":0.29},{"h":60,"spikePct":3.73,"zeroPct":0.57},{"h":64,"spikePct":3.74,"zeroPct":0.7},{"h":68,"spikePct":3.85,"zeroPct":0.49}]}</script>
+<script>
+const D=JSON.parse(document.getElementById('data').textContent);
+const $=(s)=>document.querySelector(s);
+const fmt=(n)=>n.toLocaleString('en-US');
+$('#snap').textContent=D.snapshot;
+
+/* ---- tiles ---- */
+const tiles=[
+ ['cycles logged',fmt(D.totals.cycles),'all 5 sessions'],
+ ['this run',fmt(D.totals.mainCycles),D.totals.mainHrs+' h continuous'],
+ ['rate',D.totals.ratePerMin+'/min','≈'+Math.round(D.totals.ratePerMin*60)+' per hour'],
+ ['work done',D.totals.energyMJ+' MJ','+'+D.totals.regenMJ+' MJ regenerated'],
+ ['motor peak',D.main.motMax+' °C','limit 80 warn / 100 trip'],
+ ['bus floor',D.main.vMin+' V','from 113 V nominal']];
+$('#tiles').innerHTML=tiles.map(([k,v,s])=>
+ `<div class="tile"><span class="k">${k}</span><span class="v">${v}</span><span class="s">${s}</span></div>`).join('');
+
+/* ---- trend refs ---- */
+const t=D.trend;
+$('#runh').textContent='· '+D.totals.mainHrs+' h';
+
+/* ---- chart engine: one y-scale, real ticks, hover crosshair ---- */
+const tip=$('#tip');
+function nice(lo,hi){const s=(hi-lo)||1,p=Math.pow(10,Math.floor(Math.log10(s/4)));
+ let st=p; [1,2,2.5,5,10].some(m=>{if(p*m>=s/5.5){st=p*m;return true}});
+ return {lo:Math.floor(lo/st)*st, hi:Math.ceil(hi/st)*st, st};}
+function chart(el,pts,series,ylab,fmtv){
+ const W=640,H=200,L=52,R=56,T=12,B=26;
+ let vals=[]; series.forEach(s=>pts.forEach(p=>{if(p[s.k]!=null)vals.push(p[s.k])}));
+ let {lo,hi,st}=nice(Math.min(...vals),Math.max(...vals));
+ const xs=pts.map(p=>p.h), x0=Math.min(...xs), x1=Math.max(...xs);
+ const X=v=>L+(v-x0)/((x1-x0)||1)*(W-L-R), Y=v=>T+(1-(v-lo)/((hi-lo)||1))*(H-T-B);
+ let g='';
+ for(let v=lo;v<=hi+1e-9;v+=st){const y=Y(v);
+  g+=`<line class="gl" x1="${L}" y1="${y.toFixed(1)}" x2="${W-R}" y2="${y.toFixed(1)}"/>`
+   +`<text class="tk" x="${L-8}" y="${(y+3.5).toFixed(1)}" text-anchor="end">${fmtv(v)}</text>`;}
+ for(let h=0;h<=48;h+=12){if(h<x0-.5||h>x1+.5)continue;const x=X(h);
+  g+=`<text class="tk" x="${x.toFixed(1)}" y="${H-B+18}" text-anchor="middle">${h}h</text>`;}
+ g+=`<line class="ax" x1="${L}" y1="${H-B}" x2="${W-R}" y2="${H-B}"/>`;
+ series.forEach(s=>{
+  const d=pts.filter(p=>p[s.k]!=null).map((p,i)=>`${i?'L':'M'}${X(p.h).toFixed(1)},${Y(p[s.k]).toFixed(1)}`).join('');
+  g+=`<path d="${d}" fill="none" stroke="var(--${s.c})" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+  const lp=pts.filter(p=>p[s.k]!=null).slice(-1)[0];
+  g+=`<circle cx="${X(lp.h).toFixed(1)}" cy="${Y(lp[s.k]).toFixed(1)}" r="3.5" fill="var(--${s.c})" stroke="var(--surface)" stroke-width="2"/>`;
+  g+=`<text class="dl" x="${W-R+8}" y="${(Y(lp[s.k])+4).toFixed(1)}" fill="var(--${s.c})">${s.n}</text>`;});
+ g+=`<line id="ch" x1="0" y1="${T}" x2="0" y2="${H-B}" stroke="var(--muted)" stroke-width="1" opacity="0"/>`;
+ el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${ylab} against run hours">${g}</svg>`;
+ const svg=el.querySelector('svg'), ch=svg.querySelector('#ch');
+ svg.addEventListener('pointermove',ev=>{
+  const r=svg.getBoundingClientRect(), vx=(ev.clientX-r.left)/r.width*W;
+  let best=pts[0],bd=1e9; pts.forEach(p=>{const d=Math.abs(X(p.h)-vx); if(d<bd){bd=d;best=p}});
+  ch.setAttribute('x1',X(best.h).toFixed(1)); ch.setAttribute('x2',X(best.h).toFixed(1)); ch.setAttribute('opacity','.5');
+  tip.innerHTML=`h${best.h.toFixed(1)}  `+series.map(s=>`<span style="color:var(--${s.c})">${s.n} ${fmtv(best[s.k])}</span>`).join(' · ');
+  tip.style.opacity='1'; tip.style.left=Math.min(ev.clientX+14,innerWidth-190)+'px'; tip.style.top=(ev.clientY-38)+'px';});
+ svg.addEventListener('pointerleave',()=>{tip.style.opacity='0';ch.setAttribute('opacity','0')});
+}
+const i0=v=>Math.round(v)+'', i1=v=>v.toFixed(1);
+chart($('#c_energy'),t,[{k:'extE',c:'ext',n:'extend'}],'J',i0);
+chart($('#c_energy2'),t,[{k:'retE',c:'ret',n:'retract'}],'J',i0);
+chart($('#c_cur'),t,[{k:'extPh',c:'ext',n:'ext'},{k:'retPh',c:'ret',n:'ret'}],'A',i1);
+chart($('#c_temp'),t,[{k:'mot',c:'ext',n:'motor'},{k:'fet',c:'ret',n:'FET'}],'°C',i0);
+chart($('#c_time'),t,[{k:'extT',c:'ext',n:'ext'},{k:'retT',c:'ret',n:'ret'}],'ms',i0);
+chart($('#c_anom'),D.anomalies,[{k:'spikePct',c:'ext',n:'>25 A'},{k:'zeroPct',c:'ret',n:'<50 ms'}],'%',i1);
+
+/* ---- tables ---- */
+$('#t_sess tbody').innerHTML=D.sessions.map(s=>`<tr><td>${s.n===5?'5 — current run':s.n===1?'1 — commissioning':s.n}</td>
+ <td>${fmt(s.cycles)}</td><td>${fmt(s.legs)}</td><td>${s.hrs}</td>
+ <td class="${s.motmax>=80?'bad':''}">${s.motmax} °C</td><td>${s.fetmax} °C</td>
+ <td class="${s.phmax>=45?'bad':''}">${s.phmax} A</td><td>${s.vmin} V</td></tr>`).join('');
+</script>
