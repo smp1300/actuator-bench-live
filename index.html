@@ -1,0 +1,292 @@
+<title>Actuator Endurance</title>
+<meta http-equiv="refresh" content="300">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#eef1f4; --surface:#ffffff; --sunk:#f5f7f9; --line:#dbe0e6; --hair:#e8ecf0;
+  --txt:#101821; --dim:#5a6674; --muted:#8a949f;
+  --ext:#2a78d6; --ret:#eb6834;
+  --good:#0a8a0a; --warn:#a97400; --crit:#c23434;
+  --goodbg:#e6f4e6; --warnbg:#fdf3dd; --critbg:#fbe9e9;
+  --display:"Archivo",system-ui,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0e1319; --surface:#161d25; --sunk:#111821; --line:#27313c; --hair:#1e262f;
+  --txt:#e7edf3; --dim:#94a0ad; --muted:#6d7985;
+  --ext:#3987e5; --ret:#d95926;
+  --good:#3fbf3f; --warn:#e0a52a; --crit:#e26a6a;
+  --goodbg:#14261a; --warnbg:#2a2214; --critbg:#2b1818;
+}}
+:root[data-theme="dark"]{
+  --bg:#0e1319; --surface:#161d25; --sunk:#111821; --line:#27313c; --hair:#1e262f;
+  --txt:#e7edf3; --dim:#94a0ad; --muted:#6d7985;
+  --ext:#3987e5; --ret:#d95926;
+  --good:#3fbf3f; --warn:#e0a52a; --crit:#e26a6a;
+  --goodbg:#14261a; --warnbg:#2a2214; --critbg:#2b1818;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--body);font-size:15px;line-height:1.55;
+ padding-inline:clamp(16px,3.5vw,44px);padding-block:28px 64px}
+.wrap{max-width:1060px;margin:0 auto;display:flex;flex-direction:column;gap:30px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.1}
+h1{font-size:clamp(28px,4.4vw,40px);font-weight:700;letter-spacing:-.015em}
+h2{font-size:21px;font-weight:600;letter-spacing:-.005em}
+h3{font-size:15px;font-weight:600}
+p{margin:0}
+.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+/* header */
+header{display:flex;flex-direction:column;gap:10px}
+.meta{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--mono);font-size:12.5px;color:var(--dim)}
+.meta b{color:var(--txt);font-weight:500}
+.live{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:12px;color:var(--good)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--good);flex:none}
+@media (prefers-reduced-motion:no-preference){.dot{animation:p 2.4s ease-in-out infinite}}
+@keyframes p{0%,100%{opacity:1}50%{opacity:.35}}
+/* verdict */
+.verdict{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:20px 22px;
+ display:flex;flex-direction:column;gap:14px}
+.vhead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:2px;background:var(--line);
+ border:1px solid var(--line);border-radius:5px;overflow:hidden}
+.tile{background:var(--surface);padding:12px 14px;display:flex;flex-direction:column;gap:3px}
+.tile .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.tile .v{font-family:var(--display);font-size:25px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.tile .s{font-family:var(--mono);font-size:11.5px;color:var(--dim)}
+/* findings */
+.finds{display:flex;flex-direction:column;gap:10px}
+.find{display:grid;grid-template-columns:auto 1fr;gap:14px;background:var(--surface);border:1px solid var(--line);
+ border-radius:6px;padding:14px 16px}
+.find.w{border-left:3px solid var(--warn)} .find.c{border-left:3px solid var(--crit)} .find.g{border-left:3px solid var(--good)}
+.badge{font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;padding:3px 8px;border-radius:3px;
+ height:fit-content;white-space:nowrap;font-weight:500}
+.badge.w{background:var(--warnbg);color:var(--warn)} .badge.c{background:var(--critbg);color:var(--crit)}
+.badge.g{background:var(--goodbg);color:var(--good)}
+.find .body{display:flex;flex-direction:column;gap:5px}
+.find p{font-size:14px;color:var(--dim)}
+.find p strong{color:var(--txt);font-weight:600}
+/* charts */
+.chart{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px 18px 10px;
+ display:flex;flex-direction:column;gap:4px}
+.chead{display:flex;justify-content:space-between;align-items:baseline;gap:14px;flex-wrap:wrap}
+.legend{display:flex;gap:14px;font-family:var(--mono);font-size:11.5px;color:var(--dim)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:11px;height:3px;border-radius:2px;flex:none}
+.note{font-size:13.5px;color:var(--dim)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:720px){.grid2{grid-template-columns:1fr}}
+svg{display:block;width:100%;height:auto;overflow:visible}
+.gl{stroke:var(--hair);stroke-width:1}
+.ax{stroke:var(--line);stroke-width:1}
+.tk{fill:var(--muted);font-family:var(--mono);font-size:10.5px}
+.dl{font-family:var(--mono);font-size:11px;font-weight:500}
+/* tables */
+.tw{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:6px}
+table{border-collapse:collapse;width:100%;font-size:13.5px;font-variant-numeric:tabular-nums}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);
+ text-align:right;font-weight:500;padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+td{padding:9px 12px;border-bottom:1px solid var(--hair);text-align:right;font-family:var(--mono);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+.pill{font-family:var(--mono);font-size:10.5px;padding:2px 7px;border-radius:3px}
+.pill.p{background:var(--goodbg);color:var(--good)} .pill.f{background:var(--critbg);color:var(--crit)}
+.bad{color:var(--crit)}
+footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padding-top:14px;
+ display:flex;flex-direction:column;gap:5px}
+.tip{position:fixed;pointer-events:none;background:var(--surface);border:1px solid var(--line);border-radius:5px;
+ padding:7px 10px;font-family:var(--mono);font-size:11.5px;box-shadow:0 4px 14px rgba(0,0,0,.14);opacity:0;
+ transition:opacity .1s;z-index:9;color:var(--txt);white-space:nowrap}
+.act{display:flex;flex-direction:column;gap:30px;padding-top:26px;border-top:2px solid var(--line)}
+.act-head{display:flex;flex-direction:column;gap:8px}
+.live.stale{color:var(--crit)} .live.stale .dot{background:var(--crit);animation:none}
+.cmp td.n{font-family:var(--display);font-weight:600;font-size:14.5px}
+.jump{display:flex;gap:16px;font-family:var(--mono);font-size:12.5px} .jump a{color:var(--ext)}
+</style>
+
+<div class="wrap">
+<header>
+  <span class="eyebrow">Toro Rev3 · linear actuators · <span id="fixt">durability stand</span></span>
+  <h1>Actuator Endurance</h1>
+  <div class="meta">
+    <span>snapshot <b id="snap"></b></span>
+    <span>refreshes every 10 min</span>
+    <span class="jump" id="jump"></span>
+  </div>
+</header>
+
+<section style="display:flex;flex-direction:column;gap:12px">
+  <h2>Side by side</h2>
+  <div class="tw"><table class="cmp"><thead><tr><th>Actuator</th><th>Status</th><th>Cycles</th><th>Hours</th><th>Rate</th>
+  <th>Lift J</th><th>Lower J</th><th>Net J / cycle</th><th>Lift ms</th><th>Motor peak</th><th>Bus floor</th></tr></thead>
+  <tbody id="cmp"></tbody></table></div>
+</section>
+
+<div id="acts" style="display:flex;flex-direction:column;gap:30px"></div>
+
+<footer><span>Generated from the EM_CAN cycle logs on the bench laptop. Each drive's count starts at its restart row in tools/motor_epoch.txt.</span></footer>
+</div>
+<div class="tip" id="tip"></div>
+
+<template id="act-tpl">
+<section class="act">
+  <div class="act-head">
+    <span class="eyebrow">CAN node <span class="k-node"></span> · <span class="k-csv"></span></span>
+    <h2 style="font-size:28px">Actuator <span class="k-node"></span></h2>
+    <div class="meta">
+      <span class="k-epoch"></span>
+      <span class="live k-live"><span class="dot"></span><span class="k-livetxt">still cycling at snapshot</span></span>
+    </div>
+  </div>
+  <section class="verdict"><div class="tiles k-tiles"></div></section>
+  <section style="display:flex;flex-direction:column;gap:14px">
+    <h2>Trends <span class="k-runh"></span></h2>
+    <div class="grid2">
+      <div class="chart"><div class="chead"><h3>Extend energy per leg &middot; J</h3></div><div class="k-c_energy"></div></div>
+      <div class="chart"><div class="chead"><h3>Retract energy per leg &middot; J</h3></div><div class="k-c_energy2"></div></div>
+    </div>
+    <div class="grid2">
+      <div class="chart"><div class="chead"><h3>Peak phase current &middot; A</h3>
+        <div class="legend"><span><i class="sw" style="background:var(--ext)"></i>extend</span>
+        <span><i class="sw" style="background:var(--ret)"></i>retract</span></div></div><div class="k-c_cur"></div></div>
+      <div class="chart"><div class="chead"><h3>Temperature &middot; &deg;C</h3>
+        <div class="legend"><span><i class="sw" style="background:var(--ext)"></i>motor est</span>
+        <span><i class="sw" style="background:var(--ret)"></i>FET</span></div></div><div class="k-c_temp"></div></div>
+    </div>
+    <div class="chart"><div class="chead"><h3>Leg duration &middot; ms</h3>
+      <div class="legend"><span><i class="sw" style="background:var(--ext)"></i>extend</span>
+      <span><i class="sw" style="background:var(--ret)"></i>retract</span></div></div><div class="k-c_time"></div></div>
+  </section>
+  <section class="k-driftsec" style="display:none;flex-direction:column;gap:12px">
+    <h2>Mechanism drift <span class="k-driftsub" style="font-family:var(--mono);font-size:13px;color:var(--muted);font-weight:400"></span></h2>
+    <div class="tiles k-drifttiles"></div>
+  </section>
+  <section style="display:flex;flex-direction:column;gap:12px">
+    <h2>Sessions</h2>
+    <div class="tw"><table><thead><tr><th>Session</th><th>Cycles</th><th>Legs</th><th>Hours</th>
+    <th>Motor max</th><th>FET max</th><th>Phase max</th><th>Bus min</th></tr></thead><tbody class="k-sess"></tbody></table></div>
+    <p class="note k-older"></p>
+  </section>
+</section>
+</template>
+
+<script id="data" type="application/json">{"snapshot":"2026-10-23 17:06 local","staleMin":10,"actuators":[{"snapshot":"2026-10-23 17:06 local","recent":{"loadE":461.4,"freeE":-97.5,"netE":363.9,"loadT":1054,"mins":60},"trendSession":25,"trendIsLatest":true,"epochSession":25,"fixture":"durability stand","restartLabel":"this run, from 2026-10-21 16:58","loadDir":"retract","freeDir":"extend","prior":{"cycles":133803,"legs":272067},"totals":{"legs":2812,"cycles":1406,"allCycles":135209,"sessions":25,"mainLegs":2812,"mainCycles":1406,"mainHrs":18.2,"ratePerMin":1.3,"energyMJ":0.67,"regenMJ":0.13},"main":{"motMax":78,"fetMax":51,"phMax":42.0,"vMin":111.4},"drift":{"energy":-5.6,"legms":-12.5,"phase":13.1,"baseN":394,"lateN":369},"sessions":[{"n":1,"legs":1280,"cycles":628,"hrs":1.07,"motmax":90,"fetmax":55,"phmax":48.6,"vmin":109.4,"cur":false},{"n":2,"legs":632,"cycles":316,"hrs":0.57,"motmax":57,"fetmax":56,"phmax":34.9,"vmin":108.7,"cur":false},{"n":3,"legs":652,"cycles":309,"hrs":2.83,"motmax":65,"fetmax":49,"phmax":36.9,"vmin":112.3,"cur":false},{"n":4,"legs":7516,"cycles":3613,"hrs":5.39,"motmax":54,"fetmax":50,"phmax":35.9,"vmin":112.6,"cur":false},{"n":5,"legs":112484,"cycles":55021,"hrs":69.62,"motmax":56,"fetmax":43,"phmax":37.1,"vmin":112.5,"cur":false},{"n":6,"legs":20699,"cycles":10187,"hrs":18.68,"motmax":58,"fetmax":41,"phmax":37.1,"vmin":112.5,"cur":false},{"n":7,"legs":66,"cycles":32,"hrs":0.06,"motmax":54,"fetmax":38,"phmax":36.1,"vmin":111.1,"cur":false},{"n":8,"legs":6297,"cycles":3144,"hrs":4.58,"motmax":78,"fetmax":53,"phmax":36.3,"vmin":48.8,"cur":false},{"n":9,"legs":12352,"cycles":6155,"hrs":15.82,"motmax":90,"fetmax":48,"phmax":35.4,"vmin":110.9,"cur":false},{"n":10,"legs":812,"cycles":398,"hrs":0.61,"motmax":90,"fetmax":43,"phmax":36.6,"vmin":110.9,"cur":false},{"n":11,"legs":7498,"cycles":3708,"hrs":5.26,"motmax":71,"fetmax":56,"phmax":35.7,"vmin":110.9,"cur":false},{"n":12,"legs":26101,"cycles":12752,"hrs":16.86,"motmax":84,"fetmax":60,"phmax":36.0,"vmin":110.9,"cur":false},{"n":13,"legs":3144,"cycles":1568,"hrs":2.03,"motmax":61,"fetmax":40,"phmax":35.8,"vmin":112.1,"cur":false},{"n":14,"legs":64517,"cycles":32018,"hrs":42.21,"motmax":75,"fetmax":54,"phmax":36.2,"vmin":112.0,"cur":false},{"n":15,"legs":31,"cycles":14,"hrs":1.14,"motmax":44,"fetmax":39,"phmax":48.1,"vmin":112.9,"cur":false},{"n":16,"legs":58,"cycles":27,"hrs":0.13,"motmax":12,"fetmax":34,"phmax":35.8,"vmin":112.7,"cur":false},{"n":17,"legs":927,"cycles":430,"hrs":1.46,"motmax":83,"fetmax":52,"phmax":38.8,"vmin":112.5,"cur":false},{"n":18,"legs":678,"cycles":338,"hrs":1.65,"motmax":74,"fetmax":38,"phmax":40.2,"vmin":112.7,"cur":false},{"n":19,"legs":255,"cycles":127,"hrs":0.31,"motmax":77,"fetmax":33,"phmax":45.7,"vmin":111.5,"cur":false},{"n":20,"legs":443,"cycles":203,"hrs":20.79,"motmax":76,"fetmax":31,"phmax":46.9,"vmin":111.3,"cur":false},{"n":21,"legs":2485,"cycles":1242,"hrs":2.37,"motmax":91,"fetmax":51,"phmax":45.8,"vmin":111.3,"cur":false},{"n":22,"legs":2692,"cycles":1346,"hrs":6.77,"motmax":88,"fetmax":40,"phmax":44.8,"vmin":111.4,"cur":false},{"n":23,"legs":108,"cycles":54,"hrs":0.14,"motmax":52,"fetmax":34,"phmax":36.5,"vmin":108.9,"cur":false},{"n":24,"legs":340,"cycles":170,"hrs":0.44,"motmax":71,"fetmax":49,"phmax":37.1,"vmin":100.3,"cur":false},{"n":25,"legs":2812,"cycles":1406,"hrs":18.24,"motmax":78,"fetmax":51,"phmax":42.0,"vmin":111.4,"cur":true}],"trend":[{"h":0.0,"extPh":15.2,"retPh":35.2,"extE":-86.1,"retE":494.6,"extT":1706,"retT":1201,"fet":35,"mot":54,"vmin":111.7},{"h":0.46,"extPh":15.8,"retPh":35.2,"extE":-98.8,"retE":485.7,"extT":1701,"retT":1200,"fet":45,"mot":70,"vmin":111.6},{"h":0.91,"extPh":15.6,"retPh":35.3,"extE":-100.9,"retE":490.2,"extT":1705,"retT":1219,"fet":48,"mot":76,"vmin":111.6},{"h":15.5,"extPh":13.6,"retPh":35.4,"extE":-77.3,"retE":499.2,"extT":1662,"retT":1231,"fet":24,"mot":22,"vmin":112.1},{"h":15.51,"extPh":14.9,"retPh":35.4,"extE":-86.0,"retE":490.9,"extT":1704,"retT":1170,"fet":33,"mot":49,"vmin":111.5},{"h":15.96,"extPh":15.2,"retPh":39.9,"extE":-99.1,"retE":478.0,"extT":1703,"retT":1082,"fet":43,"mot":65,"vmin":111.4},{"h":16.42,"extPh":15.6,"retPh":39.9,"extE":-100.6,"retE":472.3,"extT":1704,"retT":1081,"fet":48,"mot":70,"vmin":111.4},{"h":16.88,"extPh":15.8,"retPh":39.7,"extE":-99.0,"retE":455.3,"extT":1704,"retT":1053,"fet":50,"mot":73,"vmin":111.5},{"h":17.33,"extPh":15.7,"retPh":39.7,"extE":-97.9,"retE":455.9,"extT":1704,"retT":1048,"fet":48,"mot":74,"vmin":111.4},{"h":17.79,"extPh":15.5,"retPh":39.8,"extE":-96.8,"retE":464.4,"extT":1704,"retT":1062,"fet":46,"mot":72,"vmin":111.4}],"node":"0x98","csv":"cycle_0x98.csv","agoMin":1793.5,"stale":true},{"snapshot":"2026-10-23 17:06 local","recent":{"loadE":483.0,"freeE":-89.7,"netE":393.3,"loadT":938,"mins":60},"trendSession":3,"trendIsLatest":true,"epochSession":3,"fixture":"durability stand","restartLabel":"this run, from 2026-10-21 16:58","loadDir":"retract","freeDir":"extend","prior":{"cycles":218,"legs":436},"totals":{"legs":2271,"cycles":1132,"allCycles":1350,"sessions":3,"mainLegs":2271,"mainCycles":1132,"mainHrs":18.2,"ratePerMin":1.0,"energyMJ":0.55,"regenMJ":0.1},"main":{"motMax":90,"fetMax":51,"phMax":43.9,"vMin":112.6},"drift":{"energy":-2.5,"legms":-19.1,"phase":12.5,"baseN":211,"lateN":334},"sessions":[{"n":1,"legs":104,"cycles":52,"hrs":0.14,"motmax":41,"fetmax":29,"phmax":35.6,"vmin":111.5,"cur":false},{"n":2,"legs":332,"cycles":166,"hrs":0.44,"motmax":74,"fetmax":41,"phmax":35.9,"vmin":102.0,"cur":false},{"n":3,"legs":2271,"cycles":1132,"hrs":18.25,"motmax":90,"fetmax":51,"phmax":43.9,"vmin":112.6,"cur":true}],"trend":[{"h":0.0,"extPh":15.5,"retPh":36.8,"extE":-91.0,"retE":497.6,"extT":1732,"retT":1160,"fet":39,"mot":53,"vmin":112.9},{"h":0.46,"extPh":15.8,"retPh":36.7,"extE":-92.8,"retE":486.6,"extT":1732,"retT":1154,"fet":45,"mot":60,"vmin":112.8},{"h":15.49,"extPh":2.4,"retPh":18.2,"extE":23.6,"retE":31.5,"extT":912,"retT":527,"fet":24,"mot":22,"vmin":114.1},{"h":15.59,"extPh":14.9,"retPh":37.0,"extE":-90.8,"retE":509.6,"extT":1730,"retT":1196,"fet":34,"mot":64,"vmin":112.9},{"h":15.97,"extPh":15.5,"retPh":41.2,"extE":-94.3,"retE":468.9,"extT":1734,"retT":924,"fet":43,"mot":76,"vmin":112.8},{"h":16.42,"extPh":15.8,"retPh":41.1,"extE":-93.1,"retE":473.0,"extT":1734,"retT":927,"fet":48,"mot":85,"vmin":112.6},{"h":16.88,"extPh":15.7,"retPh":41.1,"extE":-91.6,"retE":472.8,"extT":1732,"retT":926,"fet":50,"mot":87,"vmin":112.7},{"h":17.34,"extPh":15.6,"retPh":41.2,"extE":-90.3,"retE":477.3,"extT":1736,"retT":928,"fet":50,"mot":87,"vmin":112.7},{"h":17.79,"extPh":15.6,"retPh":41.4,"extE":-89.1,"retE":493.2,"extT":1737,"retT":1065,"fet":50,"mot":88,"vmin":112.7}],"node":"0x9A","csv":"cycle_0x9A.csv","agoMin":1793.6,"stale":true}]}</script>
+<script>
+const ALL=JSON.parse(document.getElementById('data').textContent);
+const $=(s)=>document.querySelector(s);
+const fmt=(n)=>n.toLocaleString('en-US');
+const esc=(v)=>String(v).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+$('#snap').textContent=ALL.snapshot;
+if(ALL.actuators[0]&&ALL.actuators[0].fixture){$('#fixt').textContent=ALL.actuators[0].fixture;}
+$('#jump').innerHTML=ALL.actuators.map(D=>`<a href="#act-${esc(D.node)}">${esc(D.node)}</a>`).join('');
+
+/* ---- side by side ---- */
+const dash=(v,u)=>v==null?'–':v+(u||'');
+$('#cmp').innerHTML=ALL.actuators.map(D=>{
+  const r=D.recent||{};
+  const st=D.stale?`<span class="bad">stopped ${D.agoMin} min ago</span>`:`<span style="color:var(--good)">cycling</span>`;
+  return `<tr><td class="n">${esc(D.node)}</td><td>${st}</td><td>${fmt(D.totals.cycles)}</td><td>${D.totals.mainHrs}</td>
+   <td>${D.totals.ratePerMin}/min</td><td>${dash(r.loadE)}</td><td>${dash(r.freeE)}</td><td><b>${dash(r.netE)}</b></td>
+   <td>${dash(r.loadT)}</td><td class="${D.main.motMax>=80?'bad':''}">${D.main.motMax} °C</td><td>${D.main.vMin} V</td></tr>`;}).join('');
+
+/* ---- chart engine: one y-scale, real ticks, hover crosshair ---- */
+const tip=$('#tip');
+function nice(lo,hi){const s=(hi-lo)||1,p=Math.pow(10,Math.floor(Math.log10(s/4)));
+ let st=p; [1,2,2.5,5,10].some(m=>{if(p*m>=s/5.5){st=p*m;return true}});
+ return {lo:Math.floor(lo/st)*st, hi:Math.ceil(hi/st)*st, st};}
+function chart(el,pts,series,ylab,fmtv){
+ if(!pts.length){el.innerHTML='<p class="note" style="padding:24px 0">Not enough legs yet.</p>';return;}
+ const W=640,H=200,L=52,R=56,T=12,B=26;
+ let vals=[]; series.forEach(s=>pts.forEach(p=>{if(p[s.k]!=null)vals.push(p[s.k])}));
+ let {lo,hi,st}=nice(Math.min(...vals),Math.max(...vals));
+ const xs=pts.map(p=>p.h), x0=Math.min(...xs), x1=Math.max(...xs);
+ const X=v=>L+(v-x0)/((x1-x0)||1)*(W-L-R), Y=v=>T+(1-(v-lo)/((hi-lo)||1))*(H-T-B);
+ let g='';
+ for(let v=lo;v<=hi+1e-9;v+=st){const y=Y(v);
+  g+=`<line class="gl" x1="${L}" y1="${y.toFixed(1)}" x2="${W-R}" y2="${y.toFixed(1)}"/>`
+   +`<text class="tk" x="${L-8}" y="${(y+3.5).toFixed(1)}" text-anchor="end">${fmtv(v)}</text>`;}
+ const span=x1-x0, hstep=span<=2?0.5:span<=6?1:span<=24?4:span<=72?12:24;
+ for(let h=Math.ceil(x0/hstep)*hstep;h<=x1+1e-9;h+=hstep){const x=X(h);
+  g+=`<text class="tk" x="${x.toFixed(1)}" y="${H-B+18}" text-anchor="middle">${+h.toFixed(1)}h</text>`;}
+ g+=`<line class="ax" x1="${L}" y1="${H-B}" x2="${W-R}" y2="${H-B}"/>`;
+ const ends=series.map(s=>{const lp=pts.filter(p=>p[s.k]!=null).slice(-1)[0];
+                           return lp?{s,lp,y:Y(lp[s.k])}:null}).filter(Boolean);
+ ends.sort((a,b)=>a.y-b.y);
+ for(let i=1;i<ends.length;i++){
+   const gap=ends[i].y-ends[i-1].y;
+   if(gap<12){const push=(12-gap)/2; ends[i-1].y-=push; ends[i].y+=push;}
+ }
+ for(const e of ends){ if(e.y<T+6) e.y=T+6; if(e.y>H-B-2) e.y=H-B-2; }
+ series.forEach(s=>{
+  const d=pts.filter(p=>p[s.k]!=null).map((p,i)=>`${i?'L':'M'}${X(p.h).toFixed(1)},${Y(p[s.k]).toFixed(1)}`).join('');
+  g+=`<path d="${d}" fill="none" stroke="var(--${s.c})" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+  const lp=pts.filter(p=>p[s.k]!=null).slice(-1)[0];
+  if(lp) g+=`<circle cx="${X(lp.h).toFixed(1)}" cy="${Y(lp[s.k]).toFixed(1)}" r="3.5" fill="var(--${s.c})" stroke="var(--surface)" stroke-width="2"/>`;});
+ for(const e of ends)
+  g+=`<text class="dl" x="${W-R+8}" y="${(e.y+4).toFixed(1)}" fill="var(--${e.s.c})">${e.s.n}</text>`;
+ g+=`<line class="ch" x1="0" y1="${T}" x2="0" y2="${H-B}" stroke="var(--muted)" stroke-width="1" opacity="0"/>`;
+ el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${ylab} against run hours">${g}</svg>`;
+ const svg=el.querySelector('svg'), ch=svg.querySelector('.ch');
+ svg.addEventListener('pointermove',ev=>{
+  const r=svg.getBoundingClientRect(), vx=(ev.clientX-r.left)/r.width*W;
+  let best=pts[0],bd=1e9; pts.forEach(p=>{const d=Math.abs(X(p.h)-vx); if(d<bd){bd=d;best=p}});
+  ch.setAttribute('x1',X(best.h).toFixed(1)); ch.setAttribute('x2',X(best.h).toFixed(1)); ch.setAttribute('opacity','.5');
+  tip.innerHTML=`h${best.h.toFixed(1)}  `+series.map(s=>`<span style="color:var(--${s.c})">${s.n} ${fmtv(best[s.k])}</span>`).join(' · ');
+  tip.style.opacity='1'; tip.style.left=Math.min(ev.clientX+14,innerWidth-190)+'px'; tip.style.top=(ev.clientY-38)+'px';});
+ svg.addEventListener('pointerleave',()=>{tip.style.opacity='0';ch.setAttribute('opacity','0')});
+}
+const i0=v=>Math.round(v)+'', i1=v=>v.toFixed(1);
+
+/* ---- one section per actuator ---- */
+function render(D){
+ const root=document.getElementById('act-tpl').content.firstElementChild.cloneNode(true);
+ root.id='act-'+D.node;
+ const q=(c)=>root.querySelector('.k-'+c);
+ root.querySelectorAll('.k-node').forEach(e=>e.textContent=D.node);
+ q('csv').textContent='logs/'+D.csv;
+ if(D.prior&&D.prior.cycles){q('epoch').innerHTML='count restarted: <b>'+esc(D.restartLabel||'new motor')+'</b>';}
+ const live=q('live');
+ if(D.stale){live.classList.add('stale');q('livetxt').textContent='no new leg for '+D.agoMin+' min - stopped?';}
+ else if(!D.trendIsLatest){live.style.color='var(--warn)';live.querySelector('.dot').style.background='var(--warn)';q('livetxt').textContent='latest run restarted (run '+D.totals.sessions+', short)';}
+ const tiles=[
+  ['cycles, this run',fmt(D.totals.cycles),(D.prior&&D.prior.cycles?'before restart: '+fmt(D.prior.cycles):'all '+D.totals.sessions+' sessions')],
+  ['charted run',fmt(D.totals.mainCycles),'run '+D.trendSession+' · '+D.totals.mainHrs+' h'],
+  ['rate',D.totals.ratePerMin+'/min','≈'+Math.round(D.totals.ratePerMin*60)+' per hour'],
+  ['work done',D.totals.energyMJ+' MJ','+'+D.totals.regenMJ+' MJ regenerated'],
+  ['motor peak',D.main.motMax+' °C','limit 80 warn / 100 trip'],
+  ['bus floor',D.main.vMin+' V','from 113 V nominal']];
+ q('tiles').innerHTML=tiles.map(([k,v,s])=>
+  `<div class="tile"><span class="k">${k}</span><span class="v">${v}</span><span class="s">${s}</span></div>`).join('');
+ q('runh').textContent='across run '+D.trendSession+' · '+D.totals.mainHrs+' h'+(D.trendIsLatest?'':' (ended; the live run is too short to trend yet)');
+ document.getElementById('acts').appendChild(root);
+ const t=D.trend;
+ chart(q('c_energy'),t,[{k:'extE',c:'ext',n:'extend'}],'J',i0);
+ chart(q('c_energy2'),t,[{k:'retE',c:'ret',n:'retract'}],'J',i0);
+ chart(q('c_cur'),t,[{k:'extPh',c:'ext',n:'ext'},{k:'retPh',c:'ret',n:'ret'}],'A',i1);
+ chart(q('c_temp'),t,[{k:'mot',c:'ext',n:'motor'},{k:'fet',c:'ret',n:'FET'}],'°C',i0);
+ chart(q('c_time'),t,[{k:'extT',c:'ext',n:'ext'},{k:'retT',c:'ret',n:'ret'}],'ms',i0);
+ if(D.drift){
+  const d=D.drift, sec=q('driftsec');
+  sec.style.display='flex';
+  q('driftsub').textContent='final hour vs the run\u2019s own baseline';
+  const sign=v=>(v>0?'+':'')+v.toFixed(1)+' %';
+  const hot=(d.energy>=8||d.legms>=8);
+  q('drifttiles').innerHTML=[
+    ['energy / leg',sign(d.energy),'per '+(D.loadDir||'extend')+' (loaded) stroke'],
+    ['leg duration',sign(d.legms),'same speed command'],
+    ['peak current',sign(d.phase),'torque barely moved'],
+  ].map(([k,v,s2],i)=>`<div class="tile"><span class="k">${k}</span>`+
+    `<span class="v" style="color:${hot&&i<2?'var(--crit)':'var(--txt)'}">${v}</span>`+
+    `<span class="s">${s2}</span></div>`).join('');
+ }
+ // Only this run's sessions: the logs also hold earlier motors' lives.
+ const cur=D.sessions.filter(s=>s.cur), old=D.sessions.length-cur.length;
+ q('sess').innerHTML=cur.map(s=>`<tr><td>${s.n}${s.n===D.trendSession?' · charted':''}</td>
+  <td>${fmt(s.cycles)}</td><td>${fmt(s.legs)}</td><td>${s.hrs}</td>
+  <td class="${s.motmax>=80?'bad':''}">${s.motmax} °C</td><td>${s.fetmax} °C</td>
+  <td class="${s.phmax>=45?'bad':''}">${s.phmax} A</td><td>${s.vmin} V</td></tr>`).join('');
+ if(old) q('older').textContent=old+' earlier session'+(old>1?'s':'')+' in this log (before the restart) not shown.';
+}
+ALL.actuators.forEach(render);
+</script>
