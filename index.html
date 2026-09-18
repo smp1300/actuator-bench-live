@@ -1,0 +1,278 @@
+<title>Actuator 0x98 Endurance</title>
+<meta http-equiv="refresh" content="300">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#eef1f4; --surface:#ffffff; --sunk:#f5f7f9; --line:#dbe0e6; --hair:#e8ecf0;
+  --txt:#101821; --dim:#5a6674; --muted:#8a949f;
+  --ext:#2a78d6; --ret:#eb6834;
+  --good:#0a8a0a; --warn:#a97400; --crit:#c23434;
+  --goodbg:#e6f4e6; --warnbg:#fdf3dd; --critbg:#fbe9e9;
+  --display:"Archivo",system-ui,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0e1319; --surface:#161d25; --sunk:#111821; --line:#27313c; --hair:#1e262f;
+  --txt:#e7edf3; --dim:#94a0ad; --muted:#6d7985;
+  --ext:#3987e5; --ret:#d95926;
+  --good:#3fbf3f; --warn:#e0a52a; --crit:#e26a6a;
+  --goodbg:#14261a; --warnbg:#2a2214; --critbg:#2b1818;
+}}
+:root[data-theme="dark"]{
+  --bg:#0e1319; --surface:#161d25; --sunk:#111821; --line:#27313c; --hair:#1e262f;
+  --txt:#e7edf3; --dim:#94a0ad; --muted:#6d7985;
+  --ext:#3987e5; --ret:#d95926;
+  --good:#3fbf3f; --warn:#e0a52a; --crit:#e26a6a;
+  --goodbg:#14261a; --warnbg:#2a2214; --critbg:#2b1818;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--body);font-size:15px;line-height:1.55;
+ padding-inline:clamp(16px,3.5vw,44px);padding-block:28px 64px}
+.wrap{max-width:1060px;margin:0 auto;display:flex;flex-direction:column;gap:30px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.1}
+h1{font-size:clamp(28px,4.4vw,40px);font-weight:700;letter-spacing:-.015em}
+h2{font-size:21px;font-weight:600;letter-spacing:-.005em}
+h3{font-size:15px;font-weight:600}
+p{margin:0}
+.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+/* header */
+header{display:flex;flex-direction:column;gap:10px}
+.meta{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--mono);font-size:12.5px;color:var(--dim)}
+.meta b{color:var(--txt);font-weight:500}
+.live{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:12px;color:var(--good)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--good);flex:none}
+@media (prefers-reduced-motion:no-preference){.dot{animation:p 2.4s ease-in-out infinite}}
+@keyframes p{0%,100%{opacity:1}50%{opacity:.35}}
+/* verdict */
+.verdict{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:20px 22px;
+ display:flex;flex-direction:column;gap:14px}
+.vhead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:2px;background:var(--line);
+ border:1px solid var(--line);border-radius:5px;overflow:hidden}
+.tile{background:var(--surface);padding:12px 14px;display:flex;flex-direction:column;gap:3px}
+.tile .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.tile .v{font-family:var(--display);font-size:25px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.tile .s{font-family:var(--mono);font-size:11.5px;color:var(--dim)}
+/* findings */
+.finds{display:flex;flex-direction:column;gap:10px}
+.find{display:grid;grid-template-columns:auto 1fr;gap:14px;background:var(--surface);border:1px solid var(--line);
+ border-radius:6px;padding:14px 16px}
+.find.w{border-left:3px solid var(--warn)} .find.c{border-left:3px solid var(--crit)} .find.g{border-left:3px solid var(--good)}
+.badge{font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;padding:3px 8px;border-radius:3px;
+ height:fit-content;white-space:nowrap;font-weight:500}
+.badge.w{background:var(--warnbg);color:var(--warn)} .badge.c{background:var(--critbg);color:var(--crit)}
+.badge.g{background:var(--goodbg);color:var(--good)}
+.find .body{display:flex;flex-direction:column;gap:5px}
+.find p{font-size:14px;color:var(--dim)}
+.find p strong{color:var(--txt);font-weight:600}
+/* charts */
+.chart{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px 18px 10px;
+ display:flex;flex-direction:column;gap:4px}
+.chead{display:flex;justify-content:space-between;align-items:baseline;gap:14px;flex-wrap:wrap}
+.legend{display:flex;gap:14px;font-family:var(--mono);font-size:11.5px;color:var(--dim)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:11px;height:3px;border-radius:2px;flex:none}
+.note{font-size:13.5px;color:var(--dim)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:720px){.grid2{grid-template-columns:1fr}}
+svg{display:block;width:100%;height:auto;overflow:visible}
+.gl{stroke:var(--hair);stroke-width:1}
+.ax{stroke:var(--line);stroke-width:1}
+.tk{fill:var(--muted);font-family:var(--mono);font-size:10.5px}
+.dl{font-family:var(--mono);font-size:11px;font-weight:500}
+/* tables */
+.tw{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:6px}
+table{border-collapse:collapse;width:100%;font-size:13.5px;font-variant-numeric:tabular-nums}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);
+ text-align:right;font-weight:500;padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+td{padding:9px 12px;border-bottom:1px solid var(--hair);text-align:right;font-family:var(--mono);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+.pill{font-family:var(--mono);font-size:10.5px;padding:2px 7px;border-radius:3px}
+.pill.p{background:var(--goodbg);color:var(--good)} .pill.f{background:var(--critbg);color:var(--crit)}
+.bad{color:var(--crit)}
+footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padding-top:14px;
+ display:flex;flex-direction:column;gap:5px}
+.tip{position:fixed;pointer-events:none;background:var(--surface);border:1px solid var(--line);border-radius:5px;
+ padding:7px 10px;font-family:var(--mono);font-size:11.5px;box-shadow:0 4px 14px rgba(0,0,0,.14);opacity:0;
+ transition:opacity .1s;z-index:9;color:var(--txt);white-space:nowrap}
+</style>
+
+<div class="wrap">
+<header>
+  <span class="eyebrow">Toro Rev3 · linear actuator · CAN node 0x98</span>
+  <h1>Actuator 0x98 Endurance</h1>
+  <div class="meta">
+    <span>snapshot <b id="snap"></b></span>
+    <span>source <b>logs/cycle_0x98.csv</b></span>
+    <span id="epochnote"></span>
+    <span class="live" id="livepill"><span class="dot"></span><span id="livetxt">still cycling at snapshot</span></span>
+  </div>
+</header>
+
+<section class="verdict">
+  <div class="tiles" id="tiles"></div>
+</section>
+
+
+
+<section style="display:flex;flex-direction:column;gap:14px">
+  <h2>Trends <span id="runh"></span></h2>
+  <div class="grid2">
+    <div class="chart">
+      <div class="chead"><h3>Extend energy per leg &middot; J</h3></div>
+      <div id="c_energy"></div>
+    </div>
+    <div class="chart">
+      <div class="chead"><h3>Retract energy per leg &middot; J</h3></div>
+      <div id="c_energy2"></div>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="chart">
+      <div class="chead"><h3>Peak phase current &middot; A</h3>
+        <div class="legend"><span><i class="sw" style="background:var(--ext)"></i>extend</span>
+        <span><i class="sw" style="background:var(--ret)"></i>retract</span></div></div>
+      <div id="c_cur"></div>
+    </div>
+    <div class="chart">
+      <div class="chead"><h3>Temperature &middot; &deg;C</h3>
+        <div class="legend"><span><i class="sw" style="background:var(--ext)"></i>motor est</span>
+        <span><i class="sw" style="background:var(--ret)"></i>FET</span></div></div>
+      <div id="c_temp"></div>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="chart">
+      <div class="chead"><h3>Leg duration &middot; ms</h3>
+        <div class="legend"><span><i class="sw" style="background:var(--ext)"></i>extend</span>
+        <span><i class="sw" style="background:var(--ret)"></i>retract</span></div></div>
+      <div id="c_time"></div>
+    </div>
+    <div class="chart">
+      <div class="chead"><h3>Anomaly rate &middot; % of legs</h3>
+        <div class="legend"><span><i class="sw" style="background:var(--ext)"></i>retract &gt;25 A</span>
+        <span><i class="sw" style="background:var(--ret)"></i>legs &lt;50 ms</span></div></div>
+      <div id="c_anom"></div>
+    </div>
+  </div>
+</section>
+
+<section id="driftsec" style="display:none;flex-direction:column;gap:12px">
+  <h2>Mechanism drift <span id="driftsub" style="font-family:var(--mono);font-size:13px;color:var(--muted);font-weight:400"></span></h2>
+  <div class="tiles" id="drifttiles"></div>
+</section>
+
+<section style="display:flex;flex-direction:column;gap:12px">
+  <h2>Sessions</h2>
+  <div class="tw"><table id="t_sess"><thead><tr><th>Session</th><th>Cycles</th><th>Legs</th><th>Hours</th>
+  <th>Motor max</th><th>FET max</th><th>Phase max</th><th>Bus min</th></tr></thead><tbody></tbody></table></div>
+</section>
+
+</div>
+<div class="tip" id="tip"></div>
+
+<script id="data" type="application/json">{"snapshot":"2026-09-26 12:15 local","trendSession":12,"trendIsLatest":true,"epochSession":8,"prior":{"cycles":70106,"legs":143329},"totals":{"legs":53060,"cycles":26157,"allCycles":96263,"sessions":12,"mainLegs":26101,"mainCycles":12752,"mainHrs":16.9,"ratePerMin":12.9,"energyMJ":5.08,"regenMJ":1.66},"main":{"motMax":84,"fetMax":60,"phMax":36.0,"vMin":110.9},"drift":{"energy":0.4,"legms":-0.1,"phase":-0.3,"baseN":7684,"lateN":753},"sessions":[{"n":1,"legs":1280,"cycles":628,"hrs":1.07,"motmax":90,"fetmax":55,"phmax":48.6,"vmin":109.4,"cur":false},{"n":2,"legs":632,"cycles":316,"hrs":0.57,"motmax":57,"fetmax":56,"phmax":34.9,"vmin":108.7,"cur":false},{"n":3,"legs":652,"cycles":309,"hrs":2.83,"motmax":65,"fetmax":49,"phmax":36.9,"vmin":112.3,"cur":false},{"n":4,"legs":7516,"cycles":3613,"hrs":5.39,"motmax":54,"fetmax":50,"phmax":35.9,"vmin":112.6,"cur":false},{"n":5,"legs":112484,"cycles":55021,"hrs":69.62,"motmax":56,"fetmax":43,"phmax":37.1,"vmin":112.5,"cur":false},{"n":6,"legs":20699,"cycles":10187,"hrs":18.68,"motmax":58,"fetmax":41,"phmax":37.1,"vmin":112.5,"cur":false},{"n":7,"legs":66,"cycles":32,"hrs":0.06,"motmax":54,"fetmax":38,"phmax":36.1,"vmin":111.1,"cur":false},{"n":8,"legs":6297,"cycles":3144,"hrs":4.58,"motmax":78,"fetmax":53,"phmax":36.3,"vmin":48.8,"cur":true},{"n":9,"legs":12352,"cycles":6155,"hrs":15.82,"motmax":90,"fetmax":48,"phmax":35.4,"vmin":110.9,"cur":true},{"n":10,"legs":812,"cycles":398,"hrs":0.61,"motmax":90,"fetmax":43,"phmax":36.6,"vmin":110.9,"cur":true},{"n":11,"legs":7498,"cycles":3708,"hrs":5.26,"motmax":71,"fetmax":56,"phmax":35.7,"vmin":110.9,"cur":true},{"n":12,"legs":26101,"cycles":12752,"hrs":16.86,"motmax":84,"fetmax":60,"phmax":36.0,"vmin":110.9,"cur":true}],"trend":[{"h":0.0,"extPh":34.4,"retPh":12.7,"extE":417.1,"retE":-134.1,"extT":996,"retT":1596,"fet":42,"mot":63,"vmin":111.0},{"h":0.42,"extPh":34.5,"retPh":13.1,"extE":403.4,"retE":-142.0,"extT":992,"retT":1594,"fet":55,"mot":73,"vmin":111.0},{"h":0.84,"extPh":34.5,"retPh":13.0,"extE":394.6,"retE":-139.1,"extT":864,"retT":1591,"fet":52,"mot":71,"vmin":110.9},{"h":1.26,"extPh":34.5,"retPh":12.7,"extE":397.3,"retE":-134.4,"extT":860,"retT":1593,"fet":44,"mot":65,"vmin":111.0},{"h":1.69,"extPh":34.5,"retPh":12.7,"extE":399.6,"retE":-133.5,"extT":861,"retT":1593,"fet":43,"mot":65,"vmin":111.0},{"h":2.11,"extPh":34.5,"retPh":12.6,"extE":401.4,"retE":-133.5,"extT":861,"retT":1593,"fet":42,"mot":65,"vmin":111.0},{"h":2.53,"extPh":34.5,"retPh":12.6,"extE":409.1,"retE":-132.7,"extT":872,"retT":1592,"fet":42,"mot":65,"vmin":111.0},{"h":2.95,"extPh":34.5,"retPh":12.6,"extE":403.9,"retE":-132.9,"extT":862,"retT":1592,"fet":42,"mot":66,"vmin":111.0},{"h":3.37,"extPh":34.5,"retPh":12.6,"extE":407.0,"retE":-132.6,"extT":863,"retT":1592,"fet":41,"mot":65,"vmin":111.0},{"h":3.79,"extPh":34.6,"retPh":12.6,"extE":399.8,"retE":-132.4,"extT":860,"retT":1593,"fet":41,"mot":65,"vmin":111.0},{"h":4.22,"extPh":34.7,"retPh":12.5,"extE":400.1,"retE":-131.5,"extT":860,"retT":1594,"fet":41,"mot":66,"vmin":110.9},{"h":4.64,"extPh":34.7,"retPh":12.5,"extE":400.7,"retE":-130.9,"extT":860,"retT":1595,"fet":41,"mot":65,"vmin":110.9},{"h":5.06,"extPh":34.6,"retPh":12.5,"extE":400.9,"retE":-130.7,"extT":860,"retT":1593,"fet":41,"mot":65,"vmin":110.9},{"h":5.48,"extPh":34.7,"retPh":12.5,"extE":401.2,"retE":-130.9,"extT":860,"retT":1594,"fet":41,"mot":66,"vmin":110.9},{"h":5.9,"extPh":34.7,"retPh":12.5,"extE":400.0,"retE":-131.1,"extT":860,"retT":1593,"fet":40,"mot":66,"vmin":110.9},{"h":6.32,"extPh":34.6,"retPh":12.6,"extE":401.6,"retE":-130.7,"extT":860,"retT":1594,"fet":40,"mot":66,"vmin":110.9},{"h":6.74,"extPh":34.6,"retPh":12.6,"extE":401.3,"retE":-130.8,"extT":859,"retT":1593,"fet":40,"mot":66,"vmin":111.0},{"h":7.17,"extPh":34.7,"retPh":12.5,"extE":400.5,"retE":-130.6,"extT":859,"retT":1593,"fet":40,"mot":66,"vmin":111.0},{"h":7.59,"extPh":34.6,"retPh":12.5,"extE":400.4,"retE":-131.1,"extT":860,"retT":1593,"fet":40,"mot":65,"vmin":111.0},{"h":8.01,"extPh":34.6,"retPh":12.5,"extE":401.3,"retE":-131.4,"extT":859,"retT":1593,"fet":40,"mot":62,"vmin":111.0},{"h":8.43,"extPh":34.6,"retPh":12.5,"extE":401.1,"retE":-130.7,"extT":859,"retT":1595,"fet":40,"mot":62,"vmin":111.0},{"h":8.85,"extPh":34.6,"retPh":12.5,"extE":401.9,"retE":-130.2,"extT":859,"retT":1594,"fet":40,"mot":63,"vmin":111.0},{"h":9.27,"extPh":34.6,"retPh":12.4,"extE":403.1,"retE":-129.8,"extT":860,"retT":1594,"fet":39,"mot":64,"vmin":110.9},{"h":9.69,"extPh":34.6,"retPh":12.4,"extE":402.6,"retE":-130.0,"extT":859,"retT":1594,"fet":39,"mot":65,"vmin":111.0},{"h":10.12,"extPh":34.6,"retPh":12.5,"extE":405.5,"retE":-129.8,"extT":859,"retT":1594,"fet":39,"mot":63,"vmin":111.0},{"h":10.54,"extPh":34.6,"retPh":12.5,"extE":403.1,"retE":-130.3,"extT":860,"retT":1594,"fet":39,"mot":64,"vmin":111.0},{"h":10.96,"extPh":34.6,"retPh":12.6,"extE":403.3,"retE":-129.8,"extT":860,"retT":1597,"fet":39,"mot":63,"vmin":111.0},{"h":11.38,"extPh":34.6,"retPh":12.6,"extE":405.1,"retE":-129.5,"extT":859,"retT":1596,"fet":39,"mot":64,"vmin":111.0},{"h":11.8,"extPh":34.6,"retPh":12.6,"extE":404.7,"retE":-129.2,"extT":860,"retT":1596,"fet":39,"mot":65,"vmin":111.0},{"h":12.22,"extPh":34.6,"retPh":12.6,"extE":404.0,"retE":-129.1,"extT":860,"retT":1596,"fet":39,"mot":64,"vmin":111.0},{"h":12.64,"extPh":34.6,"retPh":12.6,"extE":404.8,"retE":-128.8,"extT":860,"retT":1596,"fet":39,"mot":66,"vmin":111.0},{"h":13.07,"extPh":34.6,"retPh":12.6,"extE":404.4,"retE":-128.7,"extT":859,"retT":1596,"fet":39,"mot":66,"vmin":111.0},{"h":13.49,"extPh":34.6,"retPh":12.6,"extE":405.1,"retE":-129.2,"extT":861,"retT":1593,"fet":39,"mot":66,"vmin":111.0},{"h":13.91,"extPh":34.6,"retPh":12.6,"extE":404.8,"retE":-128.8,"extT":860,"retT":1593,"fet":39,"mot":67,"vmin":111.0},{"h":14.33,"extPh":34.5,"retPh":12.6,"extE":404.8,"retE":-128.8,"extT":860,"retT":1593,"fet":38,"mot":66,"vmin":111.0},{"h":14.75,"extPh":34.6,"retPh":12.6,"extE":404.9,"retE":-128.4,"extT":860,"retT":1594,"fet":38,"mot":66,"vmin":111.0},{"h":15.17,"extPh":34.5,"retPh":12.6,"extE":405.8,"retE":-128.8,"extT":860,"retT":1595,"fet":38,"mot":66,"vmin":111.0},{"h":15.6,"extPh":34.5,"retPh":12.6,"extE":404.0,"retE":-129.1,"extT":861,"retT":1597,"fet":39,"mot":67,"vmin":111.0},{"h":16.02,"extPh":34.5,"retPh":12.6,"extE":403.5,"retE":-129.6,"extT":860,"retT":1597,"fet":39,"mot":66,"vmin":111.0},{"h":16.44,"extPh":34.5,"retPh":12.7,"extE":403.0,"retE":-129.8,"extT":860,"retT":1597,"fet":39,"mot":66,"vmin":111.0}],"anomalies":[{"h":0,"spikePct":3.77,"zeroPct":0.0},{"h":4,"spikePct":3.78,"zeroPct":0.0},{"h":8,"spikePct":3.76,"zeroPct":0.0},{"h":12,"spikePct":3.76,"zeroPct":0.02},{"h":16,"spikePct":3.66,"zeroPct":0.0}]}</script>
+<script>
+const D=JSON.parse(document.getElementById('data').textContent);
+const $=(s)=>document.querySelector(s);
+const fmt=(n)=>n.toLocaleString('en-US');
+$('#snap').textContent=D.snapshot;
+if(D.prior&&D.prior.cycles){$('#epochnote').innerHTML='count restarted at run <b>'+D.epochSession+'</b> (motor swap)';}
+if(!D.trendIsLatest){const p=$('#livepill');p.style.color='var(--warn)';p.querySelector('.dot').style.background='var(--warn)';$('#livetxt').textContent='latest run restarted (run '+D.totals.sessions+', short)';}
+
+/* ---- tiles ---- */
+const tiles=[
+ ['cycles, this motor',fmt(D.totals.cycles),(D.prior&&D.prior.cycles?'previous motor: '+fmt(D.prior.cycles):'all '+D.totals.sessions+' sessions')],
+ ['charted run',fmt(D.totals.mainCycles),'run '+D.trendSession+' · '+D.totals.mainHrs+' h'],
+ ['rate',D.totals.ratePerMin+'/min','≈'+Math.round(D.totals.ratePerMin*60)+' per hour'],
+ ['work done',D.totals.energyMJ+' MJ','+'+D.totals.regenMJ+' MJ regenerated'],
+ ['motor peak',D.main.motMax+' °C','limit 80 warn / 100 trip'],
+ ['bus floor',D.main.vMin+' V','from 113 V nominal']];
+$('#tiles').innerHTML=tiles.map(([k,v,s])=>
+ `<div class="tile"><span class="k">${k}</span><span class="v">${v}</span><span class="s">${s}</span></div>`).join('');
+
+/* ---- trend refs ---- */
+const t=D.trend;
+$('#runh').textContent='across run '+D.trendSession+' · '+D.totals.mainHrs+' h'+(D.trendIsLatest?'':' (ended; the live run is too short to trend yet)');
+
+/* ---- chart engine: one y-scale, real ticks, hover crosshair ---- */
+const tip=$('#tip');
+function nice(lo,hi){const s=(hi-lo)||1,p=Math.pow(10,Math.floor(Math.log10(s/4)));
+ let st=p; [1,2,2.5,5,10].some(m=>{if(p*m>=s/5.5){st=p*m;return true}});
+ return {lo:Math.floor(lo/st)*st, hi:Math.ceil(hi/st)*st, st};}
+function chart(el,pts,series,ylab,fmtv){
+ const W=640,H=200,L=52,R=56,T=12,B=26;
+ let vals=[]; series.forEach(s=>pts.forEach(p=>{if(p[s.k]!=null)vals.push(p[s.k])}));
+ let {lo,hi,st}=nice(Math.min(...vals),Math.max(...vals));
+ const xs=pts.map(p=>p.h), x0=Math.min(...xs), x1=Math.max(...xs);
+ const X=v=>L+(v-x0)/((x1-x0)||1)*(W-L-R), Y=v=>T+(1-(v-lo)/((hi-lo)||1))*(H-T-B);
+ let g='';
+ for(let v=lo;v<=hi+1e-9;v+=st){const y=Y(v);
+  g+=`<line class="gl" x1="${L}" y1="${y.toFixed(1)}" x2="${W-R}" y2="${y.toFixed(1)}"/>`
+   +`<text class="tk" x="${L-8}" y="${(y+3.5).toFixed(1)}" text-anchor="end">${fmtv(v)}</text>`;}
+ for(let h=0;h<=48;h+=12){if(h<x0-.5||h>x1+.5)continue;const x=X(h);
+  g+=`<text class="tk" x="${x.toFixed(1)}" y="${H-B+18}" text-anchor="middle">${h}h</text>`;}
+ g+=`<line class="ax" x1="${L}" y1="${H-B}" x2="${W-R}" y2="${H-B}"/>`;
+ // End labels can collide where two series converge, so place them after the
+ // lines and push any overlapping pair apart before drawing.
+ const ends=series.map(s=>{const lp=pts.filter(p=>p[s.k]!=null).slice(-1)[0];
+                           return lp?{s,lp,y:Y(lp[s.k])}:null}).filter(Boolean);
+ ends.sort((a,b)=>a.y-b.y);
+ for(let i=1;i<ends.length;i++){
+   const gap=ends[i].y-ends[i-1].y;
+   if(gap<12){const push=(12-gap)/2; ends[i-1].y-=push; ends[i].y+=push;}
+ }
+ for(const e of ends){ if(e.y<T+6) e.y=T+6; if(e.y>H-B-2) e.y=H-B-2; }
+ series.forEach(s=>{
+  const d=pts.filter(p=>p[s.k]!=null).map((p,i)=>`${i?'L':'M'}${X(p.h).toFixed(1)},${Y(p[s.k]).toFixed(1)}`).join('');
+  g+=`<path d="${d}" fill="none" stroke="var(--${s.c})" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+  const lp=pts.filter(p=>p[s.k]!=null).slice(-1)[0];
+  if(lp) g+=`<circle cx="${X(lp.h).toFixed(1)}" cy="${Y(lp[s.k]).toFixed(1)}" r="3.5" fill="var(--${s.c})" stroke="var(--surface)" stroke-width="2"/>`;});
+ for(const e of ends)
+  g+=`<text class="dl" x="${W-R+8}" y="${(e.y+4).toFixed(1)}" fill="var(--${e.s.c})">${e.s.n}</text>`;
+ g+=`<line id="ch" x1="0" y1="${T}" x2="0" y2="${H-B}" stroke="var(--muted)" stroke-width="1" opacity="0"/>`;
+ el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${ylab} against run hours">${g}</svg>`;
+ const svg=el.querySelector('svg'), ch=svg.querySelector('#ch');
+ svg.addEventListener('pointermove',ev=>{
+  const r=svg.getBoundingClientRect(), vx=(ev.clientX-r.left)/r.width*W;
+  let best=pts[0],bd=1e9; pts.forEach(p=>{const d=Math.abs(X(p.h)-vx); if(d<bd){bd=d;best=p}});
+  ch.setAttribute('x1',X(best.h).toFixed(1)); ch.setAttribute('x2',X(best.h).toFixed(1)); ch.setAttribute('opacity','.5');
+  tip.innerHTML=`h${best.h.toFixed(1)}  `+series.map(s=>`<span style="color:var(--${s.c})">${s.n} ${fmtv(best[s.k])}</span>`).join(' · ');
+  tip.style.opacity='1'; tip.style.left=Math.min(ev.clientX+14,innerWidth-190)+'px'; tip.style.top=(ev.clientY-38)+'px';});
+ svg.addEventListener('pointerleave',()=>{tip.style.opacity='0';ch.setAttribute('opacity','0')});
+}
+const i0=v=>Math.round(v)+'', i1=v=>v.toFixed(1);
+chart($('#c_energy'),t,[{k:'extE',c:'ext',n:'extend'}],'J',i0);
+chart($('#c_energy2'),t,[{k:'retE',c:'ret',n:'retract'}],'J',i0);
+chart($('#c_cur'),t,[{k:'extPh',c:'ext',n:'ext'},{k:'retPh',c:'ret',n:'ret'}],'A',i1);
+chart($('#c_temp'),t,[{k:'mot',c:'ext',n:'motor'},{k:'fet',c:'ret',n:'FET'}],'°C',i0);
+chart($('#c_time'),t,[{k:'extT',c:'ext',n:'ext'},{k:'retT',c:'ret',n:'ret'}],'ms',i0);
+chart($('#c_anom'),D.anomalies,[{k:'spikePct',c:'ext',n:'>25 A'},{k:'zeroPct',c:'ret',n:'<50 ms'}],'%',i1);
+
+/* ---- mechanism drift ---- */
+if(D.drift){
+  const d=D.drift, sec=$('#driftsec');
+  sec.style.display='flex';
+  $('#driftsub').textContent='final hour vs the run\u2019s own baseline';
+  const sign=v=>(v>0?'+':'')+v.toFixed(1)+' %';
+  // Energy and time moving together while current stays put is the binding
+  // signature; current moving with them would mean a genuine load step.
+  const hot=(d.energy>=8||d.legms>=8);
+  $('#drifttiles').innerHTML=[
+    ['energy / leg',sign(d.energy),'per extend stroke'],
+    ['leg duration',sign(d.legms),'same speed command'],
+    ['peak current',sign(d.phase),'torque barely moved'],
+  ].map(([k,v,s2],i)=>`<div class="tile"><span class="k">${k}</span>`+
+    `<span class="v" style="color:${hot&&i<2?'var(--crit)':'var(--txt)'}">${v}</span>`+
+    `<span class="s">${s2}</span></div>`).join('');
+}
+
+/* ---- tables ---- */
+$('#t_sess tbody').innerHTML=D.sessions.map(s=>`<tr${s.cur?'':' style="opacity:.45"'}><td>${s.n}${s.cur?'':' · previous motor'}${s.n===D.trendSession?' · charted':''}</td>
+ <td>${fmt(s.cycles)}</td><td>${fmt(s.legs)}</td><td>${s.hrs}</td>
+ <td class="${s.motmax>=80?'bad':''}">${s.motmax} °C</td><td>${s.fetmax} °C</td>
+ <td class="${s.phmax>=45?'bad':''}">${s.phmax} A</td><td>${s.vmin} V</td></tr>`).join('');
+</script>
